@@ -8,6 +8,24 @@
 #include <thread>
 enum ClientType {individual, business};
 enum ClientState {notBusy, busy, loanEval};
+std::mt19937& gen(){
+	static unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+	static std::mt19937 generator(seed);
+	return generator;
+}
+class BankBranch{
+	std::vector<Account> clients;
+	std::vector<Teller> tellers;
+	InputTM itm;
+	OutputTM otm;
+	long long balance;
+
+	public:
+	BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount);
+	long long getBalance() const;
+	BankElement* getShortestQueue(bool includeOTM, bool includeITM) const;
+	void simulate();
+}
 class Account{
     int id;
     ClientType type;
@@ -16,8 +34,12 @@ class Account{
 
     public:
     Account(int aid = -1) : id(aid), state(ClientState::notBusy){
-        type = ClientType::individual; //TODO: randomize
-        balance = 0; //TODO: randomize
+	    std::uniform_int_distribution<unsigned int> typeDistribution(0, 1);
+	    std::uniform_int_distribution<long long> balanceDistribution(0, 10000);
+	    typeDistribution(gen()) ? type = ClientType::individual : type = ClientType::business;
+	    balance = balanceDistribution(gen());
+	    if(type == ClientType::business)
+		    balance *= 1000;
     }
     int getID() const{
 	    return id;
@@ -27,6 +49,15 @@ class Account{
     }
     void setState(const ClientState &s){
 	    state = s;
+    }
+    ClientType getType() const{
+	    return type;
+    }
+    long long getBalance() const{
+	    return balance;
+    }
+    void setBalance(const long long &b){
+	    balance = b;
     }
 };
 
@@ -75,6 +106,20 @@ class BankElement{
 		 }
 	  }
     }
+    void deposit(Account &client){
+	    std::uniform_int_distribution<unsigned int> dis(1, 100);
+	    long long amount = dis(gen()) * 100;
+	    if(client.getType() == ClientType::business)
+		    amount *= 10;
+	    client.setBalance(client.getBalance() + amount);
+    }
+    void withdraw(Account &client){
+	    std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / 100);
+	    long long amount = dis(gen()) * 100;
+	    if(client.getType() == ClientType::business)
+		    amount *= 10;
+	    client.setBalance(client.getBalance() - amount);
+    }
 };
 
 class Teller : public BankElement{
@@ -95,17 +140,21 @@ class Teller : public BankElement{
     void takeLoan(Account &client){
 	    add(client, 15, ClientState::loanEval);
     }
-    void evalLoan(){
-	    unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
-	    std::mt19937 gen(seed);
+    void evalLoan(BankBranch *branch){
 	    std::uniform_int_distribution<unsigned int> chancePositiveDecision(0, 2);
-	    unsigned int decision = chancePositiveDecision(gen);
-	    if(decision == 2)
-		    std::cout << "Loan decision: positive\n";
+	    unsigned int decision = chancePositiveDecision(gen());
+	    Account &client = std::get<0>(queue.front());
+	    if(decision == 2 && client.getBalance() >= 0){
+		    std::uniform_int_distribution<long long> loanAmountDistribution(1, 1000);
+		    long long loan = loanAmountDistribution(gen()) * 1000;
+		    client.setBalance(client.getBalance() + loan);
+		    branch->setBalance(branch->getBalance() - loan);
+		    std::cout << "Client " << client.getID() << " was approved for a loan of $" << loan << std::endl;
+	    }
 	    else
-		    std::cout << "Loan decision: negative\n";
+		    std::cout << "Client " << client.getID() << " was not approved for a loan\n";
     }
-    virtual void simulate(){
+    virtual void simulate(BankBranch branch){
 	    std::cout << timeRemaining << '\t';
 	    if(timeRemaining)
 		    --timeRemaining;
@@ -115,7 +164,7 @@ class Teller : public BankElement{
 		    if(std::get<0>(queue.front()).getState() == ClientState::loanEval){
 			    std::get<0>(queue.front()).setState(ClientState::busy);
 			    timeRemaining = 10;
-			    evalLoan();
+			    evalLoan(branch);
 		    }
 		    else{
 			    std::get<0>(queue.front()).setState(ClientState::notBusy);
@@ -148,6 +197,7 @@ class InputTM : public ATM{
     }
     virtual void depositMoney(Account &client){
 	    add(client, 5);
+	    deposit(client);
     }
 };
 
@@ -156,6 +206,7 @@ class OutputTM : public ATM{
     OutputTM(int oid = -1) : ATM(oid){}
     virtual void takeMoney(Account &client){
 	    add(client, 5);
+	    withdraw(client);
     }
     virtual void depositMoney(Account &client){
 	    std::cout << "can't do that here!\n"; //TODO: exception
@@ -163,15 +214,16 @@ class OutputTM : public ATM{
 };
 
 class BankBranch{
-	public:
     std::vector<Account> clients;
     std::vector<Teller> tellers;
     InputTM itm;
     OutputTM otm;
+    long long balance;
 
+	public:
     BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount)
     : itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-		    tellers(std::vector<Teller>(0)){
+		    tellers(std::vector<Teller>(0)), balance(10'000'000){
         unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
         int i = 0;
         for(; i < max; ++i){
@@ -181,7 +233,10 @@ class BankBranch{
                 tellers.push_back(Teller(i));
         }
     }
-    BankElement* getShortestQueue(bool includeOTM, bool includeITM){
+    long long getBalance() const{
+	    return balance;
+    }
+    BankElement* getShortestQueue(bool includeOTM, bool includeITM) const{
 	BankElement* ans = &tellers[0];
 	unsigned int shortest = tellers[0].getQueueSize();
 	if(includeOTM){
@@ -211,8 +266,6 @@ class BankBranch{
 	return ans;	
     }
     void simulate(){
-	unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
-	std::mt19937 gen(seed);
 	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
@@ -220,17 +273,17 @@ class BankBranch{
 		otm.simulate();
 		itm.simulate();
 		for(int i = 0; i < tellers.size(); ++i)
-			tellers[i].simulate();
+			tellers[i].simulate(this);
 		std::cout << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
-		unsigned int clientID = clientIDDistribution(gen);
+		unsigned int clientID = clientIDDistribution(gen());
 		Account &chosen = clients[clientID];
-		if((chanceClientComes(gen) > 100) || chosen.getState() != ClientState::notBusy){
+		if((chanceClientComes(gen()) > 100) || chosen.getState() != ClientState::notBusy){
 			std::cout << "No client\n";
 			continue;
 		}
 		std::cout << "Client " << clientID << " comes in";
-		unsigned int clientAction = clientActionDistribution(gen);
+		unsigned int clientAction = clientActionDistribution(gen());
 		if(clientAction == 0){
 			std::cout << " to get info\n";
 			getShortestQueue(1, 1)->getInfo(chosen);
