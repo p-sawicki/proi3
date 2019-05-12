@@ -22,6 +22,9 @@ class Account{
     int getID() const{
 	    return id;
     }
+    ClientState getState() const{
+	    return state;
+    }
     void setState(const ClientState &s){
 	    state = s;
     }
@@ -30,7 +33,7 @@ class Account{
 class BankElement{
 	protected:
     int id;
-    std::queue<std::tuple<Account, unsigned int>> queue;
+    std::queue<std::tuple<Account&, unsigned int>> queue;
     unsigned int timeRemaining;
     std::string name;
 
@@ -50,12 +53,27 @@ class BankElement{
     size_t getQueueSize() const{
 	    return queue.size();
     }
-    void add(Account &client, const unsigned int &time, const std::string &nname, ClientState s = ClientState::busy){
+    virtual void add(Account &client, const unsigned int &time, ClientState s = ClientState::busy){
+	    client.setState(s);
 	    queue.push({client, time});
 	    if(!timeRemaining)
 		    timeRemaining = time;
-	    client.setState(s);
-	    std::cout << "Client " << client.getID() << " joins queue to " << nname << id << std::endl;
+	    std::cout << "Client " << client.getID() << " joins queue to " << name << id << std::endl;
+    }
+    virtual void simulate(){
+	    std::cout << timeRemaining << '\t';
+	   if(timeRemaining)
+		  --timeRemaining;
+	   else
+		  return;
+	  if(!timeRemaining){
+		 std::get<0>(queue.front()).setState(ClientState::notBusy);
+		 queue.pop();
+		 if(!queue.empty()){
+		 	timeRemaining = std::get<1>(queue.front());
+	  		std::cout << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << std::endl; 
+		 }
+	  }
     }
 };
 
@@ -63,19 +81,51 @@ class Teller : public BankElement{
     public:
     Teller(int tid = -1) : BankElement(tid, "Teller ") {}
     virtual void getInfo(Account &client){
-	add(client, 5, name);
+	add(client, 5);
     }
     virtual void changePIN(Account &client){
-	    add(client, 6, name);
+	    add(client, 6);
     }
     virtual void takeMoney(Account &client){
-	    add(client, 7, name);
+	    add(client, 7);
     }
     virtual void depositMoney(Account &client){
-	    add(client, 7, name);
+	    add(client, 7);
     }
     void takeLoan(Account &client){
-	    add(client, 15, name, ClientState::loanEval);
+	    add(client, 15, ClientState::loanEval);
+    }
+    void evalLoan(){
+	    unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+	    std::mt19937 gen(seed);
+	    std::uniform_int_distribution<unsigned int> chancePositiveDecision(0, 2);
+	    unsigned int decision = chancePositiveDecision(gen);
+	    if(decision == 2)
+		    std::cout << "Loan decision: positive\n";
+	    else
+		    std::cout << "Loan decision: negative\n";
+    }
+    virtual void simulate(){
+	    std::cout << timeRemaining << '\t';
+	    if(timeRemaining)
+		    --timeRemaining;
+	    else
+		    return;
+	    if(!timeRemaining){
+		    if(std::get<0>(queue.front()).getState() == ClientState::loanEval){
+			    std::get<0>(queue.front()).setState(ClientState::busy);
+			    timeRemaining = 10;
+			    evalLoan();
+		    }
+		    else{
+			    std::get<0>(queue.front()).setState(ClientState::notBusy);
+			    queue.pop();
+			    if(!queue.empty()){
+			    	timeRemaining = std::get<1>(queue.front());
+		    		std::cout << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << std::endl;
+			    }
+		    }
+	    }
     }
 };
 
@@ -83,10 +133,10 @@ class ATM : public BankElement{
     public:
     ATM(int aid = -1) : BankElement(aid, "ATM ") {}
     virtual void getInfo(Account &client){
-	    add(client, 3, name);
+	    add(client, 3);
     }
     virtual void changePIN(Account &client){
-	    add(client, 4, name);
+	    add(client, 4);
     }
 };
 
@@ -97,7 +147,7 @@ class InputTM : public ATM{
 	    std::cout << "can't do that here!\n"; //TODO: exception
     }
     virtual void depositMoney(Account &client){
-	    add(client, 5, name);
+	    add(client, 5);
     }
 };
 
@@ -105,7 +155,7 @@ class OutputTM : public ATM{
     public:
     OutputTM(int oid = -1) : ATM(oid){}
     virtual void takeMoney(Account &client){
-	    add(client, 5, name);
+	    add(client, 5);
     }
     virtual void depositMoney(Account &client){
 	    std::cout << "can't do that here!\n"; //TODO: exception
@@ -163,17 +213,22 @@ class BankBranch{
     void simulate(){
 	unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::mt19937 gen(seed);
-	std::uniform_int_distribution<unsigned int> chanceClientComes(0, 1);
+	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
 	while(true){
+		otm.simulate();
+		itm.simulate();
+		for(int i = 0; i < tellers.size(); ++i)
+			tellers[i].simulate();
+		std::cout << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
-		if(!chanceClientComes(gen)){
+		unsigned int clientID = clientIDDistribution(gen);
+		Account &chosen = clients[clientID];
+		if((chanceClientComes(gen) > 100) || chosen.getState() != ClientState::notBusy){
 			std::cout << "No client\n";
 			continue;
 		}
-		unsigned int clientID = clientIDDistribution(gen);
-		Account &chosen = clients[clientID];
 		std::cout << "Client " << clientID << " comes in";
 		unsigned int clientAction = clientActionDistribution(gen);
 		if(clientAction == 0){
@@ -200,6 +255,6 @@ class BankBranch{
     }
 };
 int main(){
-    BankBranch bb(5, 5);
+    BankBranch bb(100, 5);
     bb.simulate();
 }
