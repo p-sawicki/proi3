@@ -1,28 +1,20 @@
 #include "bankbranch.h"
-class BankBranch{
-    std::vector<Account> clients;
-    std::vector<Teller> tellers;
-    InputTM itm;
-    OutputTM otm;
-    long long balance;
-
-	public:
-    BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount)
+BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount)
     : itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-		    tellers(std::vector<Teller>(0)), balance(10'000'000){
-        unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
-        int i = 0;
-        for(; i < max; ++i){
-            if(i < clientsAmount)
-                clients.push_back(Account(i));
-            if(i < tellersAmount)
-                tellers.push_back(Teller(i));
-        }
+	tellers(std::vector<Teller>(0)), balance(10'000'000){
+    unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
+    int i = 0;
+     for(; i < max; ++i){
+         if(i < clientsAmount)
+            clients.push_back(Account(i));
+         if(i < tellersAmount)
+            tellers.push_back(Teller(i));
     }
-    long long getBalance() const{
-	    return balance;
-    }
-    BankElement* getShortestQueue(bool includeOTM, bool includeITM) const{
+}
+long long BankBranch::getBalance() const{
+	return balance;
+}
+BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM) const{
 	BankElement* ans = &tellers[0];
 	unsigned int shortest = tellers[0].getQueueSize();
 	if(includeOTM){
@@ -50,8 +42,8 @@ class BankBranch{
 		}
 	}
 	return ans;	
-    }
-    void simulate(){
+}
+void BankBranch::simulate(){
 	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
@@ -92,4 +84,3 @@ class BankBranch{
 		}
 	}
     }
-};

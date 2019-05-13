@@ -1,7 +1,7 @@
 #ifndef TELLER_H
 #define TELLER_H
 #include "bankelement.h"
-#include "bankbranch.h"
+class BankBranch;
 class Teller : public BankElement{
     public:
     Teller(int tid = -1);
