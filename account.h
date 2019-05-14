@@ -4,7 +4,7 @@
 class Account{
     int id;
     ClientType type;
-    ClientType state;
+    ClientState state;
     long long balance;
 
     public:
@@ -15,5 +15,5 @@ class Account{
     ClientType getType() const;
     long long getBalance() const;
     void setBalance(const long long &b);
-}
+};
 #endif

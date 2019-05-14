@@ -14,7 +14,7 @@ BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &te
 long long BankBranch::getBalance() const{
 	return balance;
 }
-BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM) const{
+BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM){
 	BankElement* ans = &tellers[0];
 	unsigned int shortest = tellers[0].getQueueSize();
 	if(includeOTM){
@@ -51,7 +51,7 @@ void BankBranch::simulate(){
 		otm.simulate();
 		itm.simulate();
 		for(int i = 0; i < tellers.size(); ++i)
-			tellers[i].simulate(this);
+			tellers[i].simulate(balance);
 		std::cout << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		unsigned int clientID = clientIDDistribution(gen());

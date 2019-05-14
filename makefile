@@ -8,7 +8,7 @@ atm.o: atm.h atm.cpp bankelement.h basics.h
 	g++ -c atm.cpp -o atm.o -I -Wall
 teller.o: teller.h teller.cpp bankelement.h basics.h
 	g++ -c teller.cpp -o teller.o -I -Wall
-bankbranch.o: bankbranch.h bankbranch.cpp teller.h account.h basics.h
+bankbranch.o: bankbranch.h bankbranch.cpp teller.h account.h atm.h basics.h
 	g++ -c bankbranch.cpp -o bankbranch.o -I -Wall
 main.o: proi3.cpp bankbranch.h basics.h
 	g++ -c proi3.cpp -o main.o -I -Wall

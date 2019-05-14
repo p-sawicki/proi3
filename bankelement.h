@@ -1,5 +1,5 @@
 #ifndef BANKELEMENT_H
-#define BANKELEMENT_h
+#define BANKELEMENT_H
 #include "basics.h"
 #include "account.h"
 class BankElement{
@@ -21,5 +21,5 @@ class BankElement{
     virtual void simulate();
     void deposit(Account &client);
     void withdraw(Account &client);
-}
+};
 #endif

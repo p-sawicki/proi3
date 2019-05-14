@@ -10,7 +10,7 @@
 #include <thread>
 enum ClientType {individual, business};
 enum ClientState {notBusy, busy, loanEval};
-std::mt19937& gen(){
+static std::mt19937& gen(){
 	static unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
 	static std::mt19937 generator(seed);
 	return generator;

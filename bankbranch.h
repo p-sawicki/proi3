@@ -1,6 +1,7 @@
 #ifndef BANKBRANCH_H
 #define BANKBRANCH_H
 #include "teller.h"
+#include "atm.h"
 #include "account.h"
 class BankBranch{
 	std::vector<Account> clients;
@@ -12,7 +13,7 @@ class BankBranch{
 	public:
 	BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount);
 	long long getBalance() const;
-	BankElement* getShortestQueue(bool includeOTM, bool includeITM) const;
+	BankElement* getShortestQueue(bool includeOTM, bool includeITM);
 	void simulate();
-}
+};
 #endif

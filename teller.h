@@ -1,7 +1,6 @@
 #ifndef TELLER_H
 #define TELLER_H
 #include "bankelement.h"
-class BankBranch;
 class Teller : public BankElement{
     public:
     Teller(int tid = -1);
@@ -10,7 +9,7 @@ class Teller : public BankElement{
     virtual void withdrawMoney(Account &client);
     virtual void depositMoney(Account &cient);
     void takeLoan(Account &client);
-    void evalLoan(BankBranch *branch);
-    virtual void simulate(BankBranch *branch);
-}
+    void evalLoan(long long &branchBalance);
+    virtual void simulate(long long &branchBalance);
+};
 #endif

@@ -1,23 +1,19 @@
 #include "bankelement.h"
 BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaining(0), name(n) {}
-virtual void BankElement::getInfo(Account &client) = 0;
-virtual void BankElement::changePIN(Account &client) = 0;
-virtual void BankElement::withdrawMoney(Account &client) = 0;
-virtual void BankElement::depositMoney(Account &client) = 0;
 int BankElement::getID() const{
 	return id;
 }
 size_t BankElement::getQueueSize() const{
 	return queue.size();
 }
-virtual void BankElement::add(Account &client, const unsigned int &time, ClientState s = ClientState::busy){
+void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	client.setState(s);
 	queue.push({client, time});
 	if(!timeRemaining)
 		timeRemaining = time;
 	std::cout << "Client " << client.getID() << " joins queue to " << name << id << std::endl;
 }
-virtual void BankElement::simulate(){
+void BankElement::simulate(){
 	std::cout << timeRemaining << '\t';
 	if(timeRemaining)
 		--timeRemaining;

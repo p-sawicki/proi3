@@ -1,5 +1,5 @@
 #include "account.h"
-Account::Account(int aid = -1) : id(aid), state(ClientState::notBusy){
+Account::Account(int aid) : id(aid), state(ClientState::notBusy){
 	std::uniform_int_distribution<unsigned int> typeDistribution(0, 1);
 	std::uniform_int_distribution<long long> balanceDistribution(0, 10000);
 	typeDistribution(gen()) ? type = ClientType::individual : type = ClientType::business;
