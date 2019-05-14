@@ -1,8 +1,8 @@
 #include "account.h"
 Account::Account(int aid) : id(aid), state(ClientState::notBusy){
-	std::uniform_int_distribution<unsigned int> typeDistribution(0, 1);
+	std::uniform_int_distribution<unsigned int> typeDistribution(0, 9);
 	std::uniform_int_distribution<long long> balanceDistribution(0, 10000);
-	typeDistribution(gen()) ? type = ClientType::individual : type = ClientType::business;
+	typeDistribution(gen()) < 9 ? type = ClientType::individual : type = ClientType::business;
 	balance = balanceDistribution(gen());
 	if(type == ClientType::business)
 		balance *= 1000;
