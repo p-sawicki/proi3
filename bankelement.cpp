@@ -23,7 +23,6 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	file() << message.str();
 }
 void BankElement::simulate(){
-	std::cout << timeRemaining << '\t';
 	if(timeRemaining)
 		--timeRemaining;
 	else

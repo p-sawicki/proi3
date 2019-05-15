@@ -46,7 +46,6 @@ void Teller::evalLoan(long long &branchBalance){
 	}
 }
 void Teller::simulate(long long &branchBalance){
-	std::cout << timeRemaining << '\t';
 	if(timeRemaining)
 		--timeRemaining;
 	else
