@@ -1,5 +1,8 @@
 #include "bankelement.h"
 BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaining(0), name(n) {}
+void BankElement::newBalance(Account &client){
+	std::cout << "Their updated balance: $" << client.getBalance() << ".\n";
+}
 int BankElement::getID() const{
 	return id;
 }
@@ -33,12 +36,14 @@ void BankElement::deposit(Account &client){
 	long long amount = dis(gen()) * 100;
 	if(client.getType() == ClientType::business)
 		amount *= 10;
-	client.setBalance(client.getBalance() + amount);
+	client += amount;
+	std::cout << "Client " << client.getID() << " deposits $" << amount << " into their account.";
+	newBalance(client);
 }
 void BankElement::withdraw(Account &client){
 	std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / 100);
 	long long amount = dis(gen()) * 100;
-	if(client.getType() == ClientType::business)
-		amount *= 10;
-	client.setBalance(client.getBalance() - amount);
+	client -= amount;
+	std::cout << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
+	newBalance(client);
 }

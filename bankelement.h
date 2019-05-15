@@ -8,6 +8,7 @@ class BankElement{
     std::queue<std::tuple<Account&, unsigned int>> queue;
     unsigned int timeRemaining;
     std::string name;
+    void newBalance(Account &client);
 
     public:
     BankElement(int bid, std::string n);

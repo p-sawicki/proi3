@@ -15,5 +15,7 @@ class Account{
     ClientType getType() const;
     long long getBalance() const;
     void setBalance(const long long &b);
+    Account& operator+=(const long long &b);
+    Account& operator-=(const long long &b);
 };
 #endif

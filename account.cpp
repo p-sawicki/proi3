@@ -25,3 +25,11 @@ long long Account::getBalance() const{
 void Account::setBalance(const long long &b){
 	balance = b;
 }
+Account& Account::operator+=(const long long &b){
+	balance += b;
+	return *this;
+}
+Account& Account::operator-=(const long long &b){
+	balance -= b;
+	return *this;
+}
