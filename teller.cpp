@@ -2,11 +2,11 @@
 Teller::Teller(int tid) : BankElement(tid, "Teller ") {}
 void Teller::getInfo(Account &client){
 	add(client, 5);
-	std::cout << "Client " << client.getID() << " wants to access their account info.\n";
+	getInfoMessage(client);
 }
 void Teller::changePIN(Account &client){
 	add(client, 6);
-	std::cout << "Client " << client.getID() << " wants to change their PIN.\n";
+	changePINMessage(client);
 }
 void Teller::withdrawMoney(Account &client){
 	add(client, 7);
@@ -18,7 +18,10 @@ void Teller::depositMoney(Account &client){
 }
 void Teller::takeLoan(Account &client){
 	add(client, 15, ClientState::loanEval);
-	std::cout << "Client " << client.getID() << " wants to take out a loan.\n";
+	std::stringstream message;
+	message << "Client " << client.getID() << " wants to take out a loan.\n";
+	std::cout << message.str();
+	file() << message.str();
 }
 void Teller::evalLoan(long long &branchBalance){
 	std::uniform_int_distribution<unsigned int> chancePositiveDecision(0, 2);
@@ -29,11 +32,18 @@ void Teller::evalLoan(long long &branchBalance){
 		long long loan = loanAmountDistribution(gen()) * 1000;
 		client += loan;
 		branchBalance -= loan;
-		std::cout << "Client " << client.getID() << " was approved for a loan of $" << loan << ".";
+		std::stringstream message;
+		message << "Client " << client.getID() << " was approved for a loan of $" << loan << ".";
+		std::cout << message.str();
+		file() << message.str();
 		newBalance(client);
 	}
-	else
-		std::cout << "Client " << client.getID() << " was not approved for a loan\n";
+	else{
+		std::stringstream message;
+		message << "Client " << client.getID() << " was not approved for a loan.\n";
+		std::cout << message.str();
+		file() << message.str();
+	}
 }
 void Teller::simulate(long long &branchBalance){
 	std::cout << timeRemaining << '\t';
@@ -52,7 +62,7 @@ void Teller::simulate(long long &branchBalance){
 			queue.pop();
 			if(!queue.empty()){
 			    timeRemaining = std::get<1>(queue.front());
-		    	std::cout << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << std::endl;
+		    	std::cout << "Client " << std::get<0>(queue.front()).getID() << " is now in front of queue to " << name << id << std::endl;
 			}
 		}
 	}

@@ -1,7 +1,10 @@
 #include "bankelement.h"
 BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaining(0), name(n) {}
 void BankElement::newBalance(Account &client){
-	std::cout << "Their updated balance: $" << client.getBalance() << ".\n";
+	std::stringstream message;
+	message << " Their updated balance: $" << client.getBalance() << ".\n";
+	std::cout << message.str();
+	file() << message.str();
 }
 int BankElement::getID() const{
 	return id;
@@ -14,7 +17,10 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	queue.push({client, time});
 	if(!timeRemaining)
 		timeRemaining = time;
-	std::cout << "Client " << client.getID() << " joins queue to " << name << id << std::endl;
+	std::stringstream message;
+	message << "Client " << client.getID() << " joins queue to " << name << id << "\n";
+	std::cout << message.str();
+	file() << message.str();
 }
 void BankElement::simulate(){
 	std::cout << timeRemaining << '\t';
@@ -37,13 +43,31 @@ void BankElement::deposit(Account &client){
 	if(client.getType() == ClientType::business)
 		amount *= 10;
 	client += amount;
-	std::cout << "Client " << client.getID() << " deposits $" << amount << " into their account.";
+	std::stringstream message;
+	message << "Client " << client.getID() << " deposits $" << amount << " into their account.";
+	std::cout << message.str();
+	file() << message.str();
 	newBalance(client);
 }
 void BankElement::withdraw(Account &client){
 	std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / 100);
 	long long amount = dis(gen()) * 100;
 	client -= amount;
-	std::cout << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
+	std::stringstream message;
+	message << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
+	std::cout << message.str();
+	file() << message.str();
 	newBalance(client);
+}
+void BankElement::getInfoMessage(Account &client){
+	std::stringstream message;
+	message << "Client " << client.getID() << " wants to access their account info.\n";
+	std::cout << message.str();
+	file() << message.str();
+}
+void BankElement::changePINMessage(Account &client){
+	std::stringstream message;
+	message << "Client " << client.getID() << " wants to change their PIN.\n";
+	std::cout << message.str();
+	file() << message.str();
 }

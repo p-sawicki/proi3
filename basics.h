@@ -8,11 +8,17 @@
 #include <chrono>
 #include <random>
 #include <thread>
+#include <fstream>
+#include <sstream>
 enum ClientType {individual, business};
 enum ClientState {notBusy, busy, loanEval};
 inline std::mt19937& gen(){
 	static unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
 	static std::mt19937 generator(seed);
 	return generator;
+}
+inline std::fstream& file(){
+	static std::fstream stream;
+	return stream;
 }
 #endif

@@ -1,6 +1,5 @@
 #ifndef BANKELEMENT_H
 #define BANKELEMENT_H
-#include "basics.h"
 #include "account.h"
 class BankElement{
     protected:
@@ -9,6 +8,8 @@ class BankElement{
     unsigned int timeRemaining;
     std::string name;
     void newBalance(Account &client);
+    void getInfoMessage(Account &client);
+    void changePINMessage(Account &client);
 
     public:
     BankElement(int bid, std::string n);

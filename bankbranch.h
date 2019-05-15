@@ -64,7 +64,12 @@ class BankBranch{
 		std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 		std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 		std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
+		file().open("log.txt", std::ios::out | std::ios::trunc);
+		file() << "Starting state:\nID\tAccount balance\n";
+		for(unsigned int i = 0; i < clients.size(); ++i)
+			file() << clients[i].getID() << "\t" << clients[i].getBalance() << std::endl;
 		for(unsigned int i = 0; i < duration; ++i){
+			file() << "[" << i + 1 << "] ";
 			otm.simulate();
 			itm.simulate();
 			for(int i = 0; i < tellers.size(); ++i)
@@ -74,7 +79,8 @@ class BankBranch{
 			unsigned int clientID = clientIDDistribution(gen());
 			Account &chosen = clients[clientID];
 			if((chanceClientComes(gen()) > 100) || chosen.getState() != ClientState::notBusy){
-				std::cout << "No client\n";
+				std::cout << "No new client\n";
+				file() << "No new client\n";
 				continue;
 			}
 			unsigned int clientAction = clientActionDistribution(gen());
@@ -90,6 +96,7 @@ class BankBranch{
 			else 
 				dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
 		}
+		file().close();
 	}
 };
 #endif

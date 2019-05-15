@@ -12,4 +12,4 @@ main.o: proi3.cpp bankbranch.h
 	g++ -c proi3.cpp -o main.o -I -Wall
 .PHONY: clean
 clean:
-	rm -f *.o
+	rm -f *.o log.txt

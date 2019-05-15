@@ -1,5 +1,5 @@
 #include "bankbranch.h"
 int main(){
-    BankBranch<60> bb(100, 5);
+    BankBranch<10> bb(100, 5);
     bb.simulate();
 }
