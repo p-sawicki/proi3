@@ -19,9 +19,13 @@ class BankElement{
     virtual void depositMoney(Account &client) = 0;
     int getID() const;
     size_t getQueueSize() const;
+    std::string getName() const;
+    int getQueueFront() const;
+    unsigned int getTimeRemaining() const;
     virtual void add(Account &client, const unsigned int &time, ClientState s = ClientState::busy);
-    virtual void simulate();
+    virtual void simulate(long long &balance);
     void deposit(Account &client);
     void withdraw(Account &client);
+    virtual ~BankElement();
 };
 #endif

@@ -12,6 +12,18 @@ int BankElement::getID() const{
 size_t BankElement::getQueueSize() const{
 	return queue.size();
 }
+std::string BankElement::getName() const{
+    return name;
+}
+int BankElement::getQueueFront() const{
+    if(!queue.empty())
+        return std::get<0>(queue.front()).getID();
+    else
+        return -1;
+}
+unsigned int BankElement::getTimeRemaining() const{
+    return timeRemaining;
+}
 void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	client.setState(s);
 	queue.push({client, time});
@@ -22,7 +34,7 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	std::cout << message.str();
 	file() << message.str();
 }
-void BankElement::simulate(){
+void BankElement::simulate(long long &balance){
 	if(timeRemaining)
 		--timeRemaining;
 	else
@@ -70,3 +82,4 @@ void BankElement::changePINMessage(Account &client){
 	std::cout << message.str();
 	file() << message.str();
 }
+BankElement::~BankElement(){}

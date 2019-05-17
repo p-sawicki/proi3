@@ -14,12 +14,17 @@ int main(int argc, char **argv){
 			simComplete = bb.simulate();
 		}
 		catch(std::runtime_error err){
-			std::stringstream message;
-			long long govtLoan = 10'000'000;
-			message << err.what() << "Depositing government bailout of $" << govtLoan - bb.getBalance() <<" into the bank branch. Reopening branch.\n";
-			bb.setBalance(govtLoan);
-			std::cout << message.str();
-			file() << message.str();
-		}
-	}
+            if(err.what()[3] == '1'){
+			    std::stringstream message;
+			    long long govtLoan = 10'000'000;
+			    message << err.what() << "Depositing government bailout of $" << govtLoan - bb.getBalance() <<" into the bank branch. Reopening branch.\n";
+			    bb.setBalance(govtLoan);
+			    std::cout << message.str();
+			    file() << message.str();
+	    	}
+            else 
+                std::cout << err.what();
+            
+        }
+    }
 }
