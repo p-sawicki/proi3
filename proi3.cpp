@@ -8,5 +8,18 @@ int main(int argc, char **argv){
 	unsigned int duration = 60;
 	conv >> clientsAmount >> tellersAmount >> duration;
 	BankBranch bb(clientsAmount, tellersAmount, duration);
-	bb.simulate();
+	bool simComplete = false;
+	while(!simComplete){
+		try{
+			simComplete = bb.simulate();
+		}
+		catch(std::runtime_error err){
+			std::stringstream message;
+			long long govtLoan = 10'000'000;
+			message << err.what() << "Depositing government bailout of $" << govtLoan - bb.getBalance() <<" into the bank branch. Reopening branch.\n";
+			bb.setBalance(govtLoan);
+			std::cout << message.str();
+			file() << message.str();
+		}
+	}
 }

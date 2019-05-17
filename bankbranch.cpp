@@ -34,8 +34,7 @@ BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &te
     	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
 	tellers(std::vector<Teller>(0)), balance(10'000'000), simulationLength(duration){
     	unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
-	int i = 0;
-   	for(; i < max; ++i){
+   	for(unsigned int i = 0; i < max; ++i){
        		if(i < clientsAmount)
             		clients.push_back(Account(i));
          	if(i < tellersAmount)
@@ -46,11 +45,16 @@ BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &te
     	else
 		businessOnlyTellerAmount = tellersAmount / 10;
 }
-void BankBranch::simulate(){
+void BankBranch::setBalance(const long long &b){
+	balance = b;
+}
+long long BankBranch::getBalance() const{
+	return balance;
+}
+bool BankBranch::simulate(){
 	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
-	file().open("log.txt", std::ios::out | std::ios::trunc);
 	file() << "Starting state:\nID\tAccount balance\n";
 	for(unsigned int i = 0; i < clients.size(); ++i)
 		file() << clients[i].getID() << "\t" << clients[i].getBalance() << std::endl;
@@ -71,16 +75,27 @@ void BankBranch::simulate(){
 		}
 		unsigned int clientAction = clientActionDistribution(gen());
 		bool isBusiness = chosen.getType() == ClientType::business;
-		if(clientAction == 0)
-			getShortestQueue(1, 1, isBusiness)->getInfo(chosen);
-		else if(clientAction == 1)
-			getShortestQueue(1, 1, isBusiness)->changePIN(chosen);
-		else if(clientAction == 2)
-			getShortestQueue(1, 0, isBusiness)->withdrawMoney(chosen);
-		else if(clientAction == 3)
-			getShortestQueue(0, 1, isBusiness)->depositMoney(chosen);
-		else 
-			dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
+		try{
+			if(clientAction == 0)
+				getShortestQueue(1, 1, isBusiness)->getInfo(chosen);
+			else if(clientAction == 1)
+				getShortestQueue(1, 1, isBusiness)->changePIN(chosen);
+			else if(clientAction == 2)
+				getShortestQueue(1, 0, isBusiness)->withdrawMoney(chosen);
+			else if(clientAction == 3)
+				getShortestQueue(0, 1, isBusiness)->depositMoney(chosen);
+			else 
+				dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
+		}
+		catch(std::logic_error err){
+			continue;
+		}
+		if(balance < 0){
+			std::string errMessage("Bank branch is bankrupt.\n");
+			std::runtime_error err(errMessage);
+			throw err;
+		}
 	}
 	file().close();
+	return true;
 }

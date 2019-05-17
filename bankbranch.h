@@ -15,6 +15,8 @@ class BankBranch{
 
 	public:
 	BankBranch(const unsigned int &clientsAmount, const unsigned &tellersAmount, const unsigned int &duration);
-	void simulate();
+	void setBalance(const long long &b);
+	long long getBalance() const;
+	bool simulate();
 };
 #endif

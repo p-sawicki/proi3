@@ -14,10 +14,16 @@ void ATM::changePIN(Account &client){
 	std::cout << message.str();
 	file() << message.str();
 }
-
+std::string ATM::errorMessageLog() const{
+	std::string errMessage("Error 0x1 - Invalid function call. Continuing...\n");
+	std::cout << errMessage;
+	file() << errMessage;
+	return errMessage;
+}
 InputTM::InputTM(int iid) : ATM(iid){}
 void InputTM::withdrawMoney(Account &client){
-	std::cout << "can't do that here!\n"; //TODO: exception
+	std::logic_error exc(errorMessageLog());
+	throw exc;
 }
 void InputTM::depositMoney(Account &client){
 	add(client, 5);
@@ -30,5 +36,6 @@ void OutputTM::withdrawMoney(Account &client){
 	withdraw(client);
 }
 void OutputTM::depositMoney(Account &client){
-	std::cout << "can't do that here!\n"; //TODO: exception
+	std::logic_error exc(errorMessageLog());
+	throw exc;
 }

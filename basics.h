@@ -10,6 +10,7 @@
 #include <thread>
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 enum ClientType {individual, business};
 enum ClientState {notBusy, busy, loanEval};
 inline std::mt19937& gen(){
@@ -19,6 +20,8 @@ inline std::mt19937& gen(){
 }
 inline std::fstream& file(){
 	static std::fstream stream;
+	if(!stream.is_open())
+		stream.open("log.txt", std::ios::out | std::ios::trunc);
 	return stream;
 }
 #endif
