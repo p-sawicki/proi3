@@ -1,7 +1,7 @@
 #include "bankbranch.h"
 BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool isBusiness){
-	BankElement* ans = tellers[0];
-	unsigned int shortest = tellers[0]->getQueueSize();
+	BankElement* ans = NULL;
+	unsigned int shortest = UINT_MAX; 
 	if(includeOTM){
 		if(!otm.getQueueSize())
 		return &otm;
@@ -62,6 +62,8 @@ long long BankBranch::getBalance() const{
 	return balance;
 }
 bool BankBranch::simulate(){
+    if(!clients.size())
+        return true;
 	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);

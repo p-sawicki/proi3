@@ -11,6 +11,8 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <cassert>
+#include <limits.h>
 enum ClientType {individual, business};
 enum ClientState {notBusy, busy, loanEval};
 inline std::mt19937& gen(){

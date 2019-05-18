@@ -15,7 +15,7 @@ void ATM::changePIN(Account &client){
 	file() << message.str();
 }
 std::string ATM::errorMessageLog() const{
-	std::string errMessage("Error 0x1 - Invalid function call. Continuing...\n");
+	std::string errMessage("ERR3 - Invalid function call. Continuing...\n");
 	std::cout << errMessage;
 	file() << errMessage;
 	return errMessage;

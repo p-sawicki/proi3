@@ -1,5 +1,14 @@
-#include "bankbranch.h"
+#include "test.h"
+#define DEBUG
 int main(int argc, char **argv){
+#ifdef DEBUG
+    Test t;
+    t.test1();
+    t.test2();
+    t.test3();
+    t.test4();
+    t.test5();
+#endif
 	std::stringstream conv;
 	for(int i = 1; i < argc; ++i)
 		conv << argv[i] << "\n";
