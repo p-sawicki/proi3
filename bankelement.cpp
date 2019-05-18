@@ -24,6 +24,9 @@ int BankElement::getQueueFront() const{
 unsigned int BankElement::getTimeRemaining() const{
     return timeRemaining;
 }
+ClientType BankElement::getType() const{
+    return ClientType::individual;
+}
 void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	client.setState(s);
 	queue.push({client, time});
@@ -33,6 +36,9 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	message << "Client " << client.getID() << " joins queue to " << name << id << "\n";
 	std::cout << message.str();
 	file() << message.str();
+}
+void BankElement::add(Account &client, const unsigned int &time){
+    add(client, time, ClientState::busy);
 }
 void BankElement::simulate(long long &balance){
 	if(timeRemaining)
@@ -48,22 +54,24 @@ void BankElement::simulate(long long &balance){
 		}
 	}
 }
-void BankElement::deposit(Account &client){
+void BankElement::deposit(Account &client, long long &branchBalance){
 	std::uniform_int_distribution<unsigned int> dis(1, 100);
 	long long amount = dis(gen()) * 100;
 	if(client.getType() == ClientType::business)
 		amount *= 10;
 	client += amount;
+    branchBalance += amount;
 	std::stringstream message;
 	message << "Client " << client.getID() << " deposits $" << amount << " into their account.";
 	std::cout << message.str();
 	file() << message.str();
 	newBalance(client);
 }
-void BankElement::withdraw(Account &client){
+void BankElement::withdraw(Account &client, long long &branchBalance){
 	std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / 100);
 	long long amount = dis(gen()) * 100;
 	client -= amount;
+    branchBalance -= amount;
 	std::stringstream message;
 	message << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
 	std::cout << message.str();

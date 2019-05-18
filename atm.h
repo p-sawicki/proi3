@@ -12,13 +12,13 @@ class ATM : public BankElement{
 class InputTM : public ATM{
     public:
     InputTM(int iid = -1);
-    virtual void withdrawMoney(Account &client);
-    virtual void depositMoney(Account &client);
+    virtual void withdrawMoney(Account &client, long long &branchBalance);
+    virtual void depositMoney(Account &client, long long &branchBalance);
 };
 class OutputTM : public ATM{
     public:
     OutputTM(int oid = -1);
-    virtual void withdrawMoney(Account &client);
-    virtual void depositMoney(Account &client);
+    virtual void withdrawMoney(Account &client, long long &branchBalance);
+    virtual void depositMoney(Account &client, long long &branchBalance);
 };
 #endif

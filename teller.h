@@ -3,31 +3,6 @@
 #include "bankelement.h"
 template<ClientType type>
 class Teller : public BankElement{
-    public:
-    Teller(int tid = -1) : BankElement(tid, "Teller ") {}
-    virtual void getInfo(Account &client){
-	    add(client, 5);
-	    getInfoMessage(client);
-    }
-    virtual void changePIN(Account &client){
-	    add(client, 6);
-	    changePINMessage(client);
-    }
-    virtual void withdrawMoney(Account &client){
-	    add(client, 7);
-	    withdraw(client);
-    }
-    virtual void depositMoney(Account &client){
-	    add(client, 7);
-    	deposit(client);
-    }
-    void takeLoan(Account &client){
-	    add(client, 15, ClientState::loanEval);
-	    std::stringstream message;
-	    message << "Client " << client.getID() << " wants to take out a loan.\n";
-	    std::cout << message.str();
-	    file() << message.str();
-    }
     void evalLoan(long long &branchBalance){
 	    std::uniform_int_distribution<unsigned int> chancePositiveDecision(0, 2);
 	    unsigned int decision = chancePositiveDecision(gen());
@@ -49,6 +24,34 @@ class Teller : public BankElement{
 	    	std::cout << message.str();
 	    	file() << message.str();
 	    }
+    }
+    public:
+    Teller(int tid = -1) : BankElement(tid, "Teller "){}
+    ClientType getType() const{
+        return type;
+    }
+    virtual void getInfo(Account &client){
+	    add(client, 5);
+	    getInfoMessage(client);
+    }
+    virtual void changePIN(Account &client){
+	    add(client, 6);
+	    changePINMessage(client);
+    }
+    virtual void withdrawMoney(Account &client, long long &branchBalance){
+	    add(client, 7);
+	    withdraw(client, branchBalance);
+    }
+    virtual void depositMoney(Account &client, long long &branchBalance){
+	    add(client, 7);
+    	deposit(client, branchBalance);
+    }
+    void takeLoan(Account &client){
+	    add(client, 15, ClientState::loanEval);
+	    std::stringstream message;
+	    message << "Client " << client.getID() << " wants to take out a loan.\n";
+	    std::cout << message.str();
+	    file() << message.str();
     }
     virtual void simulate(long long &branchBalance){
 	    if(timeRemaining)

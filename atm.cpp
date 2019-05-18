@@ -21,21 +21,21 @@ std::string ATM::errorMessageLog() const{
 	return errMessage;
 }
 InputTM::InputTM(int iid) : ATM(iid){}
-void InputTM::withdrawMoney(Account &client){
+void InputTM::withdrawMoney(Account &client, long long &branchBalance){
 	std::logic_error exc(errorMessageLog());
 	throw exc;
 }
-void InputTM::depositMoney(Account &client){
+void InputTM::depositMoney(Account &client, long long &branchBalance){
 	add(client, 5);
-	deposit(client);
+	deposit(client, branchBalance);
 }
 
 OutputTM::OutputTM(int oid) : ATM(oid){}
-void OutputTM::withdrawMoney(Account &client){
+void OutputTM::withdrawMoney(Account &client, long long &branchBalance){
 	add(client, 5);
-	withdraw(client);
+	withdraw(client, branchBalance);
 }
-void OutputTM::depositMoney(Account &client){
+void OutputTM::depositMoney(Account &client, long long &branchBalance){
 	std::logic_error exc(errorMessageLog());
 	throw exc;
 }
