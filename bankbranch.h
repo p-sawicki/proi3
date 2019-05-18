@@ -12,6 +12,7 @@ class BankBranch{
 	unsigned int simulationLength;
 	unsigned int businessOnlyTellerAmount;
 	BankElement* getShortestQueue(bool includeOTM, bool includeITM, bool isBusiness);
+    BankElement* getShortestQueue(bool includeOTM, bool includeITM);
     template<class T>
     void logQueueInfo(T *element){
         std::stringstream message;

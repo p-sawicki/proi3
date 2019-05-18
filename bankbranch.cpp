@@ -30,6 +30,9 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 	}
 	return ans;	
 }
+BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM){
+    return getShortestQueue(includeOTM, includeITM, false);
+}
 BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount, const unsigned int &duration)
     	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
 	tellers(std::vector<BankElement*>(0)), balance(10'000'000), simulationLength(duration){
@@ -105,6 +108,7 @@ bool BankBranch::simulate(){
 			std::runtime_error err(errMessage);
 			throw err;
 		}
+        file() << "Branch balance: " << balance << ".\n";
         file() << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
         logQueueInfo(&otm);
         logQueueInfo(&itm);
