@@ -22,7 +22,7 @@ class Logger{
     public:
     Logger(T *s) : stream(s) {}
     void open(std::string name){
-        stream->open(name, std::ios::out, std::ios::trunc);
+        stream->open(name, std::ios::out | std::ios::trunc);
     }
     T& getStream() const{
         return *stream;
