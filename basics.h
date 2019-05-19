@@ -24,7 +24,7 @@ class Logger{
     void open(std::string name){
         stream->open(name, std::ios::out, std::ios::trunc);
     }
-    T getStream() const{
+    T& getStream() const{
         return *stream;
     }
     void write(std::string message){
