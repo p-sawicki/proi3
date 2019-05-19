@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+//author: Piotr Sawicki
 #include <cassert>
 #include <limits.h>
 enum ClientType {individual, business};

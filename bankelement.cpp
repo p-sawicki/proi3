@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "bankelement.h"
 BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaining(0), name(n) {}
 void BankElement::newBalance(Account &client){

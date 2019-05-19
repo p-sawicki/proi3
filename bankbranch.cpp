@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "bankbranch.h"
 BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool isBusiness){
 	BankElement* ans = NULL;

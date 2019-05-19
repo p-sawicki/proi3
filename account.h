@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 #include "basics.h"

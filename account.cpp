@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "account.h"
 Account::Account(int aid) : id(aid), state(ClientState::notBusy){
 	std::uniform_int_distribution<unsigned int> typeDistribution(0, 9);

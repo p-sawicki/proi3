@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef BANKELEMENT_H
 #define BANKELEMENT_H
 #include "account.h"

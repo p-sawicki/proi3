@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "teller.h"
 void Teller::evalLoan(long long &branchBalance){
 	std::uniform_int_distribution<unsigned int> chancePositiveDecision(0, 2);

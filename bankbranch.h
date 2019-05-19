@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef BANKBRANCH_H
 #define BANKBRANCH_H
 #include "teller.h"

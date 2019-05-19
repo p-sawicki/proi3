@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "test.h"
 //#define DEBUG
 int main(int argc, char **argv){

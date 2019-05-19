@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef ATM_H
 #define ATM_H
 #include "bankelement.h"

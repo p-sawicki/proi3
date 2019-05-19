@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #include "atm.h"
 ATM::ATM(int aid) : BankElement(aid, "ATM ") {}
 void ATM::getInfo(Account &client){

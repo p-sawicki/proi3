@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef TELLER_H
 #define TELLER_H
 #include "bankelement.h"
