@@ -19,7 +19,7 @@ void Teller::evalLoan(long long &branchBalance){
     	logBoth(message.str());
     }
 }
-Teller::Teller(int tid = -1) : BankElement(tid, "Teller "){}
+Teller::Teller(int tid) : BankElement(tid, "Teller "){}
 void Teller::getInfo(Account &client){
 	add(client, 5);
 	getInfoMessage(client);
