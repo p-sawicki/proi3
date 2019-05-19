@@ -4,20 +4,17 @@ void ATM::getInfo(Account &client){
 	add(client, 3);
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to access their account info.\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 void ATM::changePIN(Account &client){
 	add(client, 4);
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to change their PIN.\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 std::string ATM::errorMessageLog() const{
 	std::string errMessage("ERR3 - Invalid function call. Continuing...\n");
-	std::cout << errMessage;
-	file() << errMessage;
+	logBoth(errMessage);
 	return errMessage;
 }
 void ATM::simulate(long long &balance){
@@ -30,7 +27,9 @@ void ATM::simulate(long long &balance){
 		queue.pop();
 		if(!queue.empty()){
 			timeRemaining = std::get<1>(queue.front());
-	  		std::cout << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << std::endl; 
+			std::stringstream message;
+	  		message << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << "\n";
+			console().write(message.str()); 
 		}
 	}
 }

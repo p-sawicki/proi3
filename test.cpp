@@ -41,10 +41,9 @@ void Test::test3(){
     assert(caught);
 }
 void Test::test4(){
-    Teller<ClientType::business> tel(15);
+    Teller tel(15);
     assert(tel.getID() == 15);
     assert(tel.getName() == std::string("Teller "));
-    assert(tel.getType() == ClientType::business);
     assert(tel.getQueueFront() == -1);
     assert(tel.getQueueSize() == 0);
     assert(tel.getTimeRemaining() == 0);

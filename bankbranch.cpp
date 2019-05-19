@@ -18,21 +18,19 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 			ans = &itm;
 		}
 	}
-	for(unsigned int i = 0; i < tellers.size(); ++i){
-        if(!isBusiness && tellers[i]->getType() == ClientType::business)
-            continue;
-		if(!tellers[i]->getQueueSize())
-			return tellers[i];
-		if(tellers[i]->getQueueSize() < shortest){
-			shortest = tellers[i]->getQueueSize();
-			ans = tellers[i];
+	for(unsigned int i = 0; i < tellers.size() - (!isBusiness) * businessOnlyTellerAmount; ++i){
+		if(!tellers[i].getQueueSize())
+			return &tellers[i];
+		if(tellers[i].getQueueSize() < shortest){
+			shortest = tellers[i].getQueueSize();
+			ans = &tellers[i];
 		}
 	}
 	return ans;	
 }
 BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount, const unsigned int &duration)
     	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-	tellers(std::vector<BankElement*>(0)), balance(10'000'000), simulationLength(duration){
+	tellers(std::vector<Teller>(0)), balance(10'000'000), simulationLength(duration){
     	unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
    	for(unsigned int i = 0; i < max; ++i){
     	if(!(tellersAmount / 10) && tellersAmount >= 2)
@@ -44,14 +42,7 @@ BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &te
             balance += clients[i].getBalance();
         }
         if(i < tellersAmount){
-            if(i < tellersAmount - businessOnlyTellerAmount){
-                BankElement* standardTeller = new Teller<ClientType::individual>(i);
-                    tellers.push_back(standardTeller);
-            }
-            else{
-                BankElement* businessTeller = new Teller<ClientType::business>(i);
-                tellers.push_back(businessTeller);
-            }
+            tellers.push_back(Teller(i));
         }
   	}
 }
@@ -66,24 +57,27 @@ bool BankBranch::simulate(){
         return true;
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
-	file() << "Starting state:\nID\tAccount balance\n";
+	file().write("Starting state:\nID\tAccount balance\n");
 	for(unsigned int i = 0; i < clients.size(); ++i){
-		file() << clients[i].getID();
+		std::stringstream message;
+		message << clients[i].getID();
         if(clients[i].getType() == ClientType::business)
-            file() << "[B]";
-        file() << "\t" << clients[i].getBalance() << std::endl;
+            message << "[B]";
+        message << "\t" << clients[i].getBalance() << std::endl;
+		file().write(message.str());
     }
 	for(unsigned int i = 0; i < simulationLength; ++i){
-		file() << "[" << i + 1 << "] ";
+		std::stringstream timeStamp;
+		timeStamp << "[" << i + 1 << "] ";
+		file().write(timeStamp.str());
 		otm.simulate(balance);
 		itm.simulate(balance);
 		for(unsigned int i = 0; i < tellers.size(); ++i)
-			tellers[i]->simulate(balance);
+			tellers[i].simulate(balance);
 		unsigned int clientID = clientIDDistribution(gen());
 		Account &chosen = clients[clientID];
 		if(chosen.getState() != ClientState::notBusy){
-			std::cout << "No new client\n";
-			file() << "No new client\n";
+			logBoth("No new client\n");
 			continue;
 		}
 		unsigned int clientAction = clientActionDistribution(gen());
@@ -99,9 +93,9 @@ bool BankBranch::simulate(){
 				getShortestQueue(0, 1, isBusiness)->depositMoney(chosen, balance);
             else{
                 if(chosen.getType() == ClientType::individual)
-                    dynamic_cast<Teller<ClientType::individual>*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
+                    dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
                 else
-                    dynamic_cast<Teller<ClientType::business>*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
+                    dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
             } 
 		}
 		catch(std::logic_error err){
@@ -112,19 +106,17 @@ bool BankBranch::simulate(){
 			std::runtime_error err(errMessage);
 			throw err;
 		}
-        file() << "Branch balance: " << balance << ".\n";
-        file() << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
-        logQueueInfo(&otm);
+		std::stringstream message;
+        message << "Branch balance: " << balance << ".\n";
+        message << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
+        file().write(message.str());
+		logQueueInfo(&otm);
         logQueueInfo(&itm);
         for(unsigned int i = 0; i < tellers.size(); ++i)
-            logQueueInfo(tellers[i]);
+            logQueueInfo(&tellers[i]);
 		std::cout << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
-	file().close();
+	file().getStream().close();
 	return true;
-}
-BankBranch::~BankBranch(){
-    for(unsigned int i = 0; i < tellers.size(); ++i)
-        delete tellers[i];
 }

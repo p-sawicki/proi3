@@ -3,8 +3,7 @@ BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaini
 void BankElement::newBalance(Account &client){
 	std::stringstream message;
 	message << " Their updated balance: $" << client.getBalance() << ".\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 int BankElement::getID() const{
 	return id;
@@ -37,8 +36,7 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 		timeRemaining = timeToAdd;
 	std::stringstream message;
 	message << "Client " << client.getID() << " joins queue to " << name << id << "\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 void BankElement::add(Account &client, const unsigned int &time){
     add(client, time, ClientState::busy);
@@ -52,8 +50,7 @@ void BankElement::deposit(Account &client, long long &branchBalance){
     branchBalance += amount;
 	std::stringstream message;
 	message << "Client " << client.getID() << " deposits $" << amount << " into their account.";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 	newBalance(client);
 }
 void BankElement::withdraw(Account &client, long long &branchBalance){
@@ -63,20 +60,17 @@ void BankElement::withdraw(Account &client, long long &branchBalance){
     branchBalance -= amount;
 	std::stringstream message;
 	message << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 	newBalance(client);
 }
 void BankElement::getInfoMessage(Account &client){
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to access their account info.\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 void BankElement::changePINMessage(Account &client){
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to change their PIN.\n";
-	std::cout << message.str();
-	file() << message.str();
+	logBoth(message.str());
 }
 BankElement::~BankElement(){}

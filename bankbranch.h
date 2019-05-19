@@ -7,7 +7,7 @@ class BankBranch{
 	InputTM itm;
 	OutputTM otm;
 	std::vector<Account> clients;
-	std::vector<BankElement*> tellers;
+	std::vector<Teller> tellers;
 	long long balance;
 	unsigned int simulationLength;
 	unsigned int businessOnlyTellerAmount;
@@ -19,7 +19,7 @@ class BankBranch{
         if(element->getType() == ClientType::business)
             message << "[B]";
         message << "\t" << element->getQueueFront() << "\t\t" << element->getTimeRemaining() << "\t\t" << element->getQueueSize() << "\n";
-        file() << message.str();
+        file().write(message.str());
     }
 
 	public:
@@ -27,6 +27,5 @@ class BankBranch{
 	void setBalance(const long long &b);
 	long long getBalance() const;
 	bool simulate();
-    ~BankBranch();
 };
 #endif
