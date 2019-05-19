@@ -1,5 +1,5 @@
 #include "test.h"
-#define DEBUG
+//#define DEBUG
 int main(int argc, char **argv){
 #ifdef DEBUG
     Test t;
@@ -41,6 +41,9 @@ int main(int argc, char **argv){
             else 
                 std::cout << err.what();
             
+        }
+        catch(std::bad_alloc err){
+            logBoth("ERR4 - Error due to memory allocation. Try restarting the program.\n");
         }
     }
 }
