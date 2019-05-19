@@ -29,9 +29,12 @@ ClientType BankElement::getType() const{
 }
 void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	client.setState(s);
-	queue.push({client, time});
+    unsigned int timeToAdd = time;
+    if(client.getType() == ClientType::business)
+        timeToAdd += 5;
+	queue.push({client, timeToAdd});
 	if(!timeRemaining)
-		timeRemaining = time;
+		timeRemaining = timeToAdd;
 	std::stringstream message;
 	message << "Client " << client.getID() << " joins queue to " << name << id << "\n";
 	std::cout << message.str();
@@ -39,20 +42,6 @@ void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 }
 void BankElement::add(Account &client, const unsigned int &time){
     add(client, time, ClientState::busy);
-}
-void BankElement::simulate(long long &balance){
-	if(timeRemaining)
-		--timeRemaining;
-	else
-		return;
-	if(!timeRemaining){
-		std::get<0>(queue.front()).setState(ClientState::notBusy);
-		queue.pop();
-		if(!queue.empty()){
-			timeRemaining = std::get<1>(queue.front());
-	  		std::cout << "Client " << std::get<0>(queue.front()).getID() << " now in front of queue to " << name << id << std::endl; 
-		}
-	}
 }
 void BankElement::deposit(Account &client, long long &branchBalance){
 	std::uniform_int_distribution<unsigned int> dis(1, 100);

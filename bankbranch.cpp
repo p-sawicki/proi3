@@ -23,7 +23,7 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
             continue;
 		if(!tellers[i]->getQueueSize())
 			return tellers[i];
-		if(i && tellers[i]->getQueueSize() < shortest){
+		if(tellers[i]->getQueueSize() < shortest){
 			shortest = tellers[i]->getQueueSize();
 			ans = tellers[i];
 		}
@@ -64,7 +64,6 @@ long long BankBranch::getBalance() const{
 bool BankBranch::simulate(){
     if(!clients.size())
         return true;
-	std::uniform_int_distribution<unsigned int> chanceClientComes(1, 100);
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
 	file() << "Starting state:\nID\tAccount balance\n";
@@ -82,7 +81,7 @@ bool BankBranch::simulate(){
 			tellers[i]->simulate(balance);
 		unsigned int clientID = clientIDDistribution(gen());
 		Account &chosen = clients[clientID];
-		if((chanceClientComes(gen()) > 100) || chosen.getState() != ClientState::notBusy){
+		if(chosen.getState() != ClientState::notBusy){
 			std::cout << "No new client\n";
 			file() << "No new client\n";
 			continue;

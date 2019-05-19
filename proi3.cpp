@@ -15,7 +15,15 @@ int main(int argc, char **argv){
 	unsigned int clientsAmount = 100;
 	unsigned int tellersAmount = 5;
 	unsigned int duration = 60;
-	conv >> clientsAmount >> tellersAmount >> duration;
+    if(conv.str()[0] < '0' || conv.str()[0] > '9'){
+        std::fstream file;
+        std::string fileName;
+        conv >> fileName;
+        file.open(fileName, std::ios::in);
+        file >> clientsAmount >> tellersAmount >> duration;
+    }
+    else
+	    conv >> clientsAmount >> tellersAmount >> duration;
 	BankBranch bb(clientsAmount, tellersAmount, duration);
 	bool simComplete = false;
 	while(!simComplete){

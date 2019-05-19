@@ -17,6 +17,7 @@ class BankElement{
     virtual void changePIN(Account &client) = 0;
     virtual void withdrawMoney(Account &client, long long &branchBalance) = 0;
     virtual void depositMoney(Account &client, long long &branchBalance) = 0;
+    virtual void simulate(long long &balance) = 0; //advances state of element as if 1 minute has passed.
     int getID() const;
     size_t getQueueSize() const;
     std::string getName() const;
@@ -25,7 +26,6 @@ class BankElement{
     virtual ClientType getType() const;
     void add(Account &client, const unsigned int &time, ClientState s);
     void add(Account &client, const unsigned int &time);
-    virtual void simulate(long long &balance);
     void deposit(Account &client, long long &branchBalance);
     void withdraw(Account &client, long long &branchBalance);
     virtual ~BankElement();

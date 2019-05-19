@@ -8,6 +8,7 @@ class ATM : public BankElement{
     ATM(int aid = -1);
     virtual void getInfo(Account &client);
     virtual void changePIN(Account &client);
+    virtual void simulate(long long &balance);
 };
 class InputTM : public ATM{
     public:
