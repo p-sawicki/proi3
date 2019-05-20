@@ -2,10 +2,10 @@
 #define BANKELEMENTINTERFACE_H
 #include "basics.h"
 class BankElementInterface{
-	protected:
-	BankElementInterface(){};
+    protected:
+    BankElementInterface(){};
     
-	public:
+    public:
     virtual void getInfo(Account &client) = 0;
     virtual void changePIN(Account &client) = 0;
     virtual void withdrawMoney(Account &client, long long &branchBalance) = 0;
