@@ -5,6 +5,7 @@
 class ATM : public BankElement{
 	protected:
 	std::string errorMessageLog() const;
+    
     public:
     ATM(int aid = -1);
     virtual void getInfo(Account &client);

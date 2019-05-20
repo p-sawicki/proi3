@@ -6,7 +6,7 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 	unsigned int shortest = UINT_MAX; 
 	if(includeOTM){
 		if(!otm.getQueueSize())
-		return &otm;
+			return &otm;
 		if(otm.getQueueSize() < shortest){
 			shortest = otm.getQueueSize();
 			ans = &otm;
@@ -32,8 +32,8 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 }
 BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount, const unsigned int &duration)
     	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-	tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
-    	unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
+		tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
+    unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
    	for(unsigned int i = 0; i < max; ++i){
     	if(!(tellersAmount / 10) && tellersAmount > 1)
 		    businessOnlyTellerAmount = 1;
@@ -97,8 +97,7 @@ bool BankBranch::simulate(){
 			else if(clientAction == 3)
 				getShortestQueue(false, true, isBusiness)->depositMoney(chosen, balance);
 			else
-              dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
-             
+            	dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
 		}
 		catch(std::logic_error err){
 			continue;

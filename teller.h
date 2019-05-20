@@ -4,6 +4,7 @@
 #include "bankelement.h"
 class Teller : public BankElement{
     void evalLoan(long long &branchBalance);
+    
     public:
     Teller(int tid = -1);
     virtual void getInfo(Account &client);

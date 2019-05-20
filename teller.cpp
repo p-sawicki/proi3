@@ -29,9 +29,9 @@ void Teller::getInfo(Account &client){
 	getInfoMessage(client);
 }
 void Teller::changePIN(Account &client){
-		const unsigned int timeToChangePINTeller = 6;
-	    add(client, timeToChangePINTeller);
-	    changePINMessage(client);
+	const unsigned int timeToChangePINTeller = 6;
+	add(client, timeToChangePINTeller);
+	changePINMessage(client);
 }
 void Teller::withdrawMoney(Account &client, long long &branchBalance){
 	const unsigned int timeToWithdrawMoneyTeller = 7;

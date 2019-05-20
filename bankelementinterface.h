@@ -3,7 +3,8 @@
 #include "basics.h"
 class BankElementInterface{
 	protected:
-		BankElementInterface(){};
+	BankElementInterface(){};
+    
 	public:
     virtual void getInfo(Account &client) = 0;
     virtual void changePIN(Account &client) = 0;
