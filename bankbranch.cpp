@@ -31,8 +31,8 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 	return ans;	
 }
 BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount, const unsigned int &duration)
-    	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-		tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
+        : itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)), 
+        tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
     unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
    	for(unsigned int i = 0; i < max; ++i){
     	if(!(tellersAmount / 10) && tellersAmount > 1)
