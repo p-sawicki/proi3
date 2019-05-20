@@ -64,12 +64,12 @@ bool BankBranch::simulate(){
 		clientActionDistribution = std::uniform_int_distribution<unsigned int>(0, lastActionIdentifier - 1);
 	file().write("Starting state:\nID\tAccount balance\n");
 	for(unsigned int i = 0; i < clients.size(); ++i){
-		std::stringstream message;
-		message << clients[i].getID();
+        std::stringstream message;
+        message << clients[i].getID();
         if(clients[i].getType() == ClientType::business)
             message << "[B]";
         message << "\t" << clients[i].getBalance() << std::endl;
-		file().write(message.str());
+        file().write(message.str());
     }
 	for(unsigned int i = 0; i < simulationLength; ++i){
 		std::stringstream timeStamp;
