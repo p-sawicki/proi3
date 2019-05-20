@@ -83,6 +83,8 @@ bool BankBranch::simulate(){
 		Account &chosen = clients[clientID];
 		if(chosen.getState() != ClientState::notBusy){
 			logBoth("No new client\n");
+			console().write("\n");
+			std::this_thread::sleep_for(std::chrono::seconds(1));
 			continue;
 		}
 		unsigned int clientAction = clientActionDistribution(gen());
