@@ -63,7 +63,7 @@ bool BankBranch::simulate(){
 	if(tellers.size() == 0)
 		clientActionDistribution = std::uniform_int_distribution<unsigned int>(0, lastActionIdentifier - 1);
 	file().write("Starting state:\nID\tAccount balance\n");
-	for(unsigned int i = 0; i < clients.size(); ++i){
+    for(unsigned int i = 0; i < clients.size(); ++i){
         std::stringstream message;
         message << clients[i].getID();
         if(clients[i].getType() == ClientType::business)
