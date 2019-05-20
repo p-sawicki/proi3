@@ -16,10 +16,7 @@ class BankBranch{
     template<class T>
     void logQueueInfo(T *element){
         std::stringstream message;
-        message << element->getName() << "\t" << element->getID();
-        if(element->getType() == ClientType::business)
-            message << "[B]";
-        message << "\t" << element->getQueueFront() << "\t\t" << element->getTimeRemaining() << "\t\t" << element->getQueueSize() << "\n";
+        message << element->getName() << "\t" << element->getID() << "\t" << element->getQueueFront() << "\t\t" << element->getTimeRemaining() << "\t\t" << element->getQueueSize() << "\n";
         file().write(message.str());
     }
 

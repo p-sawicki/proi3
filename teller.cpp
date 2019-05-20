@@ -5,8 +5,10 @@ void Teller::evalLoan(long long &branchBalance){
 	unsigned int decision = chancePositiveDecision(gen());
 	Account &client = std::get<0>(queue.front());
 	if(decision == 2 && client.getBalance() >= 0){
-	    std::uniform_int_distribution<long long> loanAmountDistribution(1, 1000);
-	    long long loan = loanAmountDistribution(gen()) * 1000;
+		const long long maxLoanAmount = 1'000;
+		const long long loanAmountMultiplier = 1'000;
+	    std::uniform_int_distribution<long long> loanAmountDistribution(1, maxLoanAmount);
+	    long long loan = loanAmountDistribution(gen()) * loanAmountMultiplier;
 		client += loan;
     	branchBalance -= loan;
 		std::stringstream message;
@@ -22,23 +24,28 @@ void Teller::evalLoan(long long &branchBalance){
 }
 Teller::Teller(int tid) : BankElement(tid, "Teller "){}
 void Teller::getInfo(Account &client){
-	add(client, 5);
+	const unsigned int timeToGetInfoTeller = 5;
+	add(client, timeToGetInfoTeller);
 	getInfoMessage(client);
 }
 void Teller::changePIN(Account &client){
-	    add(client, 6);
+		const unsigned int timeToChangePINTeller = 6;
+	    add(client, timeToChangePINTeller);
 	    changePINMessage(client);
 }
 void Teller::withdrawMoney(Account &client, long long &branchBalance){
-	add(client, 7);
+	const unsigned int timeToWithdrawMoneyTeller = 7;
+	add(client, timeToWithdrawMoneyTeller);
 	withdraw(client, branchBalance);
 }
 void Teller::depositMoney(Account &client, long long &branchBalance){
-	add(client, 7);
+	const unsigned int timeToDepositMoneyTeller = 7;
+	add(client, timeToDepositMoneyTeller);
     deposit(client, branchBalance);
 }
 void Teller::takeLoan(Account &client){
-	add(client, 15, ClientState::loanEval);
+	const unsigned int timeToEvaluateLoan = 15;
+	add(client, timeToEvaluateLoan, ClientState::loanEval);
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to take out a loan.\n";
 	logBoth(message.str());
@@ -51,7 +58,8 @@ void Teller::simulate(long long &branchBalance){
     if(!timeRemaining){
     	if(std::get<0>(queue.front()).getState() == ClientState::loanEval){
     		std::get<0>(queue.front()).setState(ClientState::busy);
-    		timeRemaining = 10;
+    		const unsigned int timeToSignLoan = 10;
+    		timeRemaining = timeToSignLoan;
     		evalLoan(branchBalance);
     	}
     	else{

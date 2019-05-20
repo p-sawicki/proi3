@@ -1,6 +1,6 @@
 //author: Piotr Sawicki
 #include "bankelement.h"
-BankElement::BankElement(int bid, std::string n) : id(bid), queue(), timeRemaining(0), name(n) {}
+BankElement::BankElement(int bid, std::string n) : BankElementInterface(), id(bid), queue(), timeRemaining(0), name(n){}
 void BankElement::newBalance(Account &client){
 	std::stringstream message;
 	message << " Their updated balance: $" << client.getBalance() << ".\n";
@@ -16,22 +16,21 @@ std::string BankElement::getName() const{
     return name;
 }
 int BankElement::getQueueFront() const{
+	const int nobodyInQueueFlag = -1;
     if(!queue.empty())
         return std::get<0>(queue.front()).getID();
     else
-        return -1;
+        return nobodyInQueueFlag;
 }
 unsigned int BankElement::getTimeRemaining() const{
     return timeRemaining;
 }
-ClientType BankElement::getType() const{
-    return ClientType::individual;
-}
 void BankElement::add(Account &client, const unsigned int &time, ClientState s){
 	client.setState(s);
     unsigned int timeToAdd = time;
+    const unsigned int additionalTimeBusinessClient = 5;
     if(client.getType() == ClientType::business)
-        timeToAdd += 5;
+        timeToAdd += additionalTimeBusinessClient;
 	queue.push({client, timeToAdd});
 	if(!timeRemaining)
 		timeRemaining = timeToAdd;
@@ -43,10 +42,13 @@ void BankElement::add(Account &client, const unsigned int &time){
     add(client, time, ClientState::busy);
 }
 void BankElement::deposit(Account &client, long long &branchBalance){
-	std::uniform_int_distribution<unsigned int> dis(1, 100);
-	long long amount = dis(gen()) * 100;
+	const unsigned int maxAmountToDeposit = 100;
+	const unsigned int standardDepositMultiplier = 100;
+	const unsigned int additionalBusinessDepositMultiplier = 10;
+	std::uniform_int_distribution<unsigned int> dis(1, maxAmountToDeposit);
+	long long amount = dis(gen()) * standardDepositMultiplier;
 	if(client.getType() == ClientType::business)
-		amount *= 10;
+		amount *= additionalBusinessDepositMultiplier;
 	client += amount;
     branchBalance += amount;
 	std::stringstream message;
@@ -55,11 +57,17 @@ void BankElement::deposit(Account &client, long long &branchBalance){
 	newBalance(client);
 }
 void BankElement::withdraw(Account &client, long long &branchBalance){
-	std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / 100);
-	long long amount = dis(gen()) * 100;
+	std::stringstream message;
+	const unsigned int minimumToWithdraw = 100;
+	if(client.getBalance() < minimumToWithdraw){
+		message << "Client " << client.getID() << " does not have enough money to withdraw.\n";
+		logBoth(message.str());
+		return;
+	}	
+	std::uniform_int_distribution<unsigned int> dis(1, client.getBalance() / minimumToWithdraw); // division and multiplication by 100 to get prettier values (ending in -00)
+	long long amount = dis(gen()) * minimumToWithdraw;
 	client -= amount;
     branchBalance -= amount;
-	std::stringstream message;
 	message << "Client " << client.getID() << " withdraws $" << amount << " from their account.";
 	logBoth(message.str());
 	newBalance(client);
@@ -74,4 +82,3 @@ void BankElement::changePINMessage(Account &client){
 	message << "Client " << client.getID() << " wants to change their PIN.\n";
 	logBoth(message.str());
 }
-BankElement::~BankElement(){}

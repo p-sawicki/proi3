@@ -2,13 +2,15 @@
 #include "atm.h"
 ATM::ATM(int aid) : BankElement(aid, "ATM ") {}
 void ATM::getInfo(Account &client){
-	add(client, 3);
+	const unsigned int timeToGetInfoATM = 3;
+	add(client, timeToGetInfoATM);
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to access their account info.\n";
 	logBoth(message.str());
 }
 void ATM::changePIN(Account &client){
-	add(client, 4);
+	const unsigned int timeToChangePINATM = 4;
+	add(client, timeToChangePINATM);
 	std::stringstream message;
 	message << "Client " << client.getID() << " wants to change their PIN.\n";
 	logBoth(message.str());
@@ -40,13 +42,15 @@ void InputTM::withdrawMoney(Account &client, long long &branchBalance){
 	throw exc;
 }
 void InputTM::depositMoney(Account &client, long long &branchBalance){
-	add(client, 5);
+	const unsigned int timeToDepositMoneyATM = 5;
+	add(client, timeToDepositMoneyATM);
 	deposit(client, branchBalance);
 }
 
 OutputTM::OutputTM(int oid) : ATM(oid){}
 void OutputTM::withdrawMoney(Account &client, long long &branchBalance){
-	add(client, 5);
+	const unsigned int timeToWithdrawMoneyATM = 5;
+	add(client, timeToWithdrawMoneyATM);
 	withdraw(client, branchBalance);
 }
 void OutputTM::depositMoney(Account &client, long long &branchBalance){

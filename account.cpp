@@ -2,11 +2,13 @@
 #include "account.h"
 Account::Account(int aid) : id(aid), state(ClientState::notBusy){
 	std::uniform_int_distribution<unsigned int> typeDistribution(0, 9);
-	std::uniform_int_distribution<long long> balanceDistribution(0, 10000);
+	const long long maxStartingBalanceIndividual = 10'000;
+	const long long businessStartingBalanceMultiplier = 1'000;
+	std::uniform_int_distribution<long long> balanceDistribution(0, maxStartingBalanceIndividual);
 	typeDistribution(gen()) < 9 ? type = ClientType::individual : type = ClientType::business;
 	balance = balanceDistribution(gen());
 	if(type == ClientType::business)
-		balance *= 1000;
+		balance *= businessStartingBalanceMultiplier;
 }
 int Account::getID() const{
 	return id;

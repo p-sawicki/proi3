@@ -4,10 +4,10 @@
 #include "bankbranch.h"
 class Test{
     public:
-        void test1();
-        void test2();
-        void test3();
-        void test4();
-        void test5();
+        void accountMethodsTest();
+        void logicErrorCatchTestITM();
+        void logicErrorCatchTestOTM();
+        void tellerMethodsTest();
+        void branchBankruptExceptionCatchTest();
 };
 #endif

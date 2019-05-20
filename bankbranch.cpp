@@ -1,5 +1,6 @@
 //author: Piotr Sawicki
 #include "bankbranch.h"
+#define STARTING_BRANCH_BALANCE 10'000'000
 BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool isBusiness){
 	BankElement* ans = NULL;
 	unsigned int shortest = UINT_MAX; 
@@ -31,10 +32,10 @@ BankElement* BankBranch::getShortestQueue(bool includeOTM, bool includeITM, bool
 }
 BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &tellersAmount, const unsigned int &duration)
     	: itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)),
-	tellers(std::vector<Teller>(0)), balance(10'000'000), simulationLength(duration){
+	tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
     	unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
    	for(unsigned int i = 0; i < max; ++i){
-    	if(!(tellersAmount / 10) && tellersAmount >= 2)
+    	if(!(tellersAmount / 10) && tellersAmount > 1)
 		    businessOnlyTellerAmount = 1;
     	else
 		    businessOnlyTellerAmount = tellersAmount / 10;
@@ -56,8 +57,11 @@ long long BankBranch::getBalance() const{
 bool BankBranch::simulate(){
     if(!clients.size())
         return true;
+    const unsigned int lastActionIdentifier = 4;
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
-	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, 4);
+	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, lastActionIdentifier);
+	if(tellers.size() == 0)
+		clientActionDistribution = std::uniform_int_distribution<unsigned int>(0, lastActionIdentifier - 1);
 	file().write("Starting state:\nID\tAccount balance\n");
 	for(unsigned int i = 0; i < clients.size(); ++i){
 		std::stringstream message;
@@ -85,19 +89,16 @@ bool BankBranch::simulate(){
 		bool isBusiness = chosen.getType() == ClientType::business;
 		try{
 			if(clientAction == 0)
-				getShortestQueue(1, 1, isBusiness)->getInfo(chosen);
+				getShortestQueue(true, true, isBusiness)->getInfo(chosen);
 			else if(clientAction == 1)
-				getShortestQueue(1, 1, isBusiness)->changePIN(chosen);
+				getShortestQueue(true, true, isBusiness)->changePIN(chosen);
 			else if(clientAction == 2)
-				getShortestQueue(1, 0, isBusiness)->withdrawMoney(chosen, balance);
+				getShortestQueue(true, false, isBusiness)->withdrawMoney(chosen, balance);
 			else if(clientAction == 3)
-				getShortestQueue(0, 1, isBusiness)->depositMoney(chosen, balance);
-            else{
-                if(chosen.getType() == ClientType::individual)
-                    dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
-                else
-                    dynamic_cast<Teller*>(getShortestQueue(0, 0, isBusiness))->takeLoan(chosen);
-            } 
+				getShortestQueue(false, true, isBusiness)->depositMoney(chosen, balance);
+			else
+              dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
+             
 		}
 		catch(std::logic_error err){
 			continue;

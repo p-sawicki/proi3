@@ -4,11 +4,11 @@
 int main(int argc, char **argv){
 #ifdef DEBUG
     Test t;
-    t.test1();
-    t.test2();
-    t.test3();
-    t.test4();
-    t.test5();
+    t.accountMethodsTest();
+    t.logicErrorCatchTestITM();
+    t.logicErrorCatchTestOTM();
+    t.tellerMethodsTest();
+    t.branchBankruptExceptionCatchTest();
 #endif
 	std::stringstream conv;
 	for(int i = 1; i < argc; ++i)
@@ -34,7 +34,7 @@ int main(int argc, char **argv){
 		catch(std::runtime_error err){
             if(err.what()[3] == '1'){
 			    std::stringstream message;
-			    long long govtLoan = 10'000'000;
+			    const long long govtLoan = 10'000'000;
 			    message << err.what() << "Depositing government bailout of $" << govtLoan - bb.getBalance() <<" into the bank branch. Reopening branch.\n";
 			    bb.setBalance(govtLoan);
 			    logBoth(message.str());

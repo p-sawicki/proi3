@@ -1,6 +1,6 @@
 //author: Piotr Sawicki
 #include "test.h"
-void Test::test1(){
+void Test::accountMethodsTest(){
     Account acc(10);
     assert(acc.getID() == 10);
     assert(acc.getState() == ClientState::notBusy);
@@ -15,7 +15,7 @@ void Test::test1(){
     acc += 1;
     assert(acc.getBalance() == -89'999);
 }
-void Test::test2(){
+void Test::logicErrorCatchTestITM(){
     InputTM itm;
     Account acc(10);
     long long balance = 0;
@@ -28,7 +28,7 @@ void Test::test2(){
     }
     assert(caught);
 }
-void Test::test3(){
+void Test::logicErrorCatchTestOTM(){
     OutputTM otm;
     Account acc(10);
     long long balance = 0;
@@ -41,7 +41,7 @@ void Test::test3(){
     }
     assert(caught);
 }
-void Test::test4(){
+void Test::tellerMethodsTest(){
     Teller tel(15);
     assert(tel.getID() == 15);
     assert(tel.getName() == std::string("Teller "));
@@ -55,7 +55,7 @@ void Test::test4(){
     assert(tel.getQueueSize() == 1);
     assert(tel.getTimeRemaining() == 15 || tel.getTimeRemaining() == 20);
 }
-void Test::test5(){
+void Test::branchBankruptExceptionCatchTest(){
     BankBranch bb(1, 10, 60);
     assert(bb.getBalance() >= 10'000'000);
     bb.setBalance(-20'000'000);

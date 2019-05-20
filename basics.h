@@ -1,3 +1,4 @@
+//author: Piotr Sawicki
 #ifndef BASICS_H
 #define BASICS_H
 #include <iostream>
@@ -11,7 +12,6 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-//author: Piotr Sawicki
 #include <cassert>
 #include <limits.h>
 enum ClientType {individual, business};
