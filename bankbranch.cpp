@@ -55,9 +55,9 @@ long long BankBranch::getBalance() const{
 	return balance;
 }
 bool BankBranch::simulate(){
-    if(!clients.size())
-        return true;
-    const unsigned int lastActionIdentifier = 4;
+    	if(!clients.size())
+		return true;
+    	const unsigned int lastActionIdentifier = 4;
 	std::uniform_int_distribution<unsigned int> clientIDDistribution(0, clients.size() - 1);
 	std::uniform_int_distribution<unsigned int> clientActionDistribution(0, lastActionIdentifier);
 	if(tellers.size() == 0)
@@ -67,10 +67,10 @@ bool BankBranch::simulate(){
 		std::stringstream message;
 		message << clients[i].getID();
         if(clients[i].getType() == ClientType::business)
-            message << "[B]";
+        	message << "[B]";
         message << "\t" << clients[i].getBalance() << std::endl;
 		file().write(message.str());
-    }
+    	}
 	for(unsigned int i = 0; i < simulationLength; ++i){
 		std::stringstream timeStamp;
 		timeStamp << "[" << i + 1 << "] ";
@@ -99,7 +99,7 @@ bool BankBranch::simulate(){
 			else if(clientAction == 3)
 				getShortestQueue(false, true, isBusiness)->depositMoney(chosen, balance);
 			else
-            	dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
+            			dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
 		}
 		catch(std::logic_error err){
 			continue;
@@ -110,13 +110,13 @@ bool BankBranch::simulate(){
 			throw err;
 		}
 		std::stringstream message;
-        message << "Branch balance: " << balance << ".\n";
-        message << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
-        file().write(message.str());
+        	message << "Branch balance: " << balance << ".\n";
+        	message << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
+        	file().write(message.str());
 		logQueueInfo(&otm);
-        logQueueInfo(&itm);
-        for(unsigned int i = 0; i < tellers.size(); ++i)
-            logQueueInfo(&tellers[i]);
+        	logQueueInfo(&itm);
+        	for(unsigned int i = 0; i < tellers.size(); ++i)
+        		logQueueInfo(&tellers[i]);
 		std::cout << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
