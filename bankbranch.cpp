@@ -66,9 +66,9 @@ bool BankBranch::simulate(){
 	for(unsigned int i = 0; i < clients.size(); ++i){
 		std::stringstream message;
 		message << clients[i].getID();
-        if(clients[i].getType() == ClientType::business)
-        	message << "[B]";
-        message << "\t" << clients[i].getBalance() << std::endl;
+        	if(clients[i].getType() == ClientType::business)
+        		message << "[B]";
+        	message << "\t" << clients[i].getBalance() << std::endl;
 		file().write(message.str());
     	}
 	for(unsigned int i = 0; i < simulationLength; ++i){
