@@ -71,55 +71,55 @@ bool BankBranch::simulate(){
         message << "\t" << clients[i].getBalance() << std::endl;
         file().write(message.str());
     }
-	for(unsigned int i = 0; i < simulationLength; ++i){
-		std::stringstream timeStamp;
-		timeStamp << "[" << i + 1 << "] ";
-		file().write(timeStamp.str());
-		otm.simulate(balance);
-		itm.simulate(balance);
-		for(unsigned int i = 0; i < tellers.size(); ++i)
-			tellers[i].simulate(balance);
-		unsigned int clientID = clientIDDistribution(gen());
-		Account &chosen = clients[clientID];
-		if(chosen.getState() != ClientState::notBusy){
-			logBoth("No new client\n");
-			console().write("\n");
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-			continue;
-		}
-		unsigned int clientAction = clientActionDistribution(gen());
-		bool isBusiness = chosen.getType() == ClientType::business;
-		try{
-			if(clientAction == 0)
-				getShortestQueue(true, true, isBusiness)->getInfo(chosen);
-			else if(clientAction == 1)
-				getShortestQueue(true, true, isBusiness)->changePIN(chosen);
-			else if(clientAction == 2)
-				getShortestQueue(true, false, isBusiness)->withdrawMoney(chosen, balance);
-			else if(clientAction == 3)
-				getShortestQueue(false, true, isBusiness)->depositMoney(chosen, balance);
-			else
+    for(unsigned int i = 0; i < simulationLength; ++i){
+        std::stringstream timeStamp;
+        timeStamp << "[" << i + 1 << "] ";
+        file().write(timeStamp.str());
+        otm.simulate(balance);
+        itm.simulate(balance);
+        for(unsigned int i = 0; i < tellers.size(); ++i)
+            tellers[i].simulate(balance);
+        unsigned int clientID = clientIDDistribution(gen());
+        Account &chosen = clients[clientID];
+        if(chosen.getState() != ClientState::notBusy){
+            logBoth("No new client\n");
+            console().write("\n");
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            continue;
+        }
+        unsigned int clientAction = clientActionDistribution(gen());
+        bool isBusiness = chosen.getType() == ClientType::business;
+        try{
+            if(clientAction == 0)
+                getShortestQueue(true, true, isBusiness)->getInfo(chosen);
+            else if(clientAction == 1)
+                getShortestQueue(true, true, isBusiness)->changePIN(chosen);
+            else if(clientAction == 2)
+                getShortestQueue(true, false, isBusiness)->withdrawMoney(chosen, balance);
+            else if(clientAction == 3)
+                getShortestQueue(false, true, isBusiness)->depositMoney(chosen, balance);
+            else
                 dynamic_cast<Teller*>(getShortestQueue(false, false, isBusiness))->takeLoan(chosen);
-		}
-		catch(std::logic_error err){
-			continue;
-		}
-		if(balance < 0){
-			std::string errMessage("ERR1 - Bank branch is bankrupt.\n");
-			std::runtime_error err(errMessage);
-			throw err;
-		}
-		std::stringstream message;
+        }
+        catch(std::logic_error err){
+            continue;
+        }
+        if(balance < 0){
+            std::string errMessage("ERR1 - Bank branch is bankrupt.\n");
+            std::runtime_error err(errMessage);
+            throw err;
+        }
+        std::stringstream message;
         message << "Branch balance: " << balance << ".\n";
         message << "State of queues: \nName\tID\tClient ID\tTime Remaining\tQueue Size\n";
         file().write(message.str());
-		logQueueInfo(&otm);
+        logQueueInfo(&otm);
         logQueueInfo(&itm);
         for(unsigned int i = 0; i < tellers.size(); ++i)
             logQueueInfo(&tellers[i]);
-		std::cout << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
-	file().getStream().close();
-	return true;
+        std::cout << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    file().getStream().close();
+    return true;
 }
