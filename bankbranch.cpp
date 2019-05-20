@@ -34,19 +34,19 @@ BankBranch::BankBranch(const unsigned int &clientsAmount, const unsigned int &te
         : itm(InputTM(tellersAmount)), otm(OutputTM(tellersAmount + 1)), clients(std::vector<Account>(0)), 
         tellers(std::vector<Teller>(0)), balance(STARTING_BRANCH_BALANCE), simulationLength(duration){
     unsigned int max = clientsAmount > tellersAmount ? clientsAmount : tellersAmount;
-   	for(unsigned int i = 0; i < max; ++i){
-    	if(!(tellersAmount / 10) && tellersAmount > 1)
-		    businessOnlyTellerAmount = 1;
-    	else
-		    businessOnlyTellerAmount = tellersAmount / 10;
-       	if(i < clientsAmount){
-           	clients.push_back(Account(i));
+    for(unsigned int i = 0; i < max; ++i){
+        if(!(tellersAmount / 10) && tellersAmount > 1)
+            businessOnlyTellerAmount = 1;
+        else
+            businessOnlyTellerAmount = tellersAmount / 10;
+        if(i < clientsAmount){
+            clients.push_back(Account(i));
             balance += clients[i].getBalance();
         }
         if(i < tellersAmount){
             tellers.push_back(Teller(i));
         }
-  	}
+    }
 }
 void BankBranch::setBalance(const long long &b){
 	balance = b;
